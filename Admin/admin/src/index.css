@@ -1,0 +1,19 @@
+@import "tailwindcss"; 
+@font-face {
+   font-family: ne;
+   src: url("./assets/Outfit-VariableFont_wght.ttf");
+}
+*{
+  /* margin: 0; */
+  /* padding: 0; */
+  box-sizing: border-box;
+  /* font-family: ne; */
+  scroll-behavior: smooth ;
+}
+.Sidebar .active{
+  background-color: tomato;
+}
+.foodlist .heading{
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 1fr 0.5fr;
+}
