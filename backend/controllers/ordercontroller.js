@@ -16,11 +16,15 @@ const frontend_url = process.env.FRONTEND_URL || 'http://localhost:5173';
 let placeOrder = async (req, res) => {
   try {
     const stripe = getStripe();
+    const totalAmount = req.body.Items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    ) + 2;
 
     let newOrder = new orderModel({
       userId: req.body.userId,
       Items: req.body.Items,
-      amount: req.body.amount,
+      amount: totalAmount,
       address: req.body.address,
       payment: false
     });
@@ -62,10 +66,10 @@ let placeOrder = async (req, res) => {
 };
 
 // ================== STRIPE WEBHOOK ==================
-const webhookHandler = (req, res, next) => {
-  // raw body is required for Stripe webhook signature
-  next();
-};
+// const webhookHandler = (req, res, next) => {
+//   // raw body is required for Stripe webhook signature
+//   next();
+// };
 
 const stripeWebhook = async (req, res) => {
   const stripe = getStripe();
@@ -130,4 +134,4 @@ let updateStatus = async (req, res) => {
   }
 };
 
-export { placeOrder, stripeWebhook, webhookHandler, user_order, listorder, updateStatus };
+export { placeOrder, stripeWebhook, user_order, listorder, updateStatus };
