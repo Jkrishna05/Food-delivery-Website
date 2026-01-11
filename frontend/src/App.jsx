@@ -7,7 +7,7 @@ import Signpopup from './Components/Signpopup/Signpopup'
 import Cart from './Pages/Cart/Cart'
 import Order from './Pages/OrderPlace/Order'
 import Myorder from './Pages/myorder/Myorder'
-import OrderSuccess from './Pages/order-success/orderSuccess'
+import OrderSuccess from './Pages/order-success/OrderSuccess'
 
 const App = () => {
   let [showSignpopup, setShowSignpopup] = useState(false)

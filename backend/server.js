@@ -9,7 +9,6 @@ import cartroute from "./routes/cartroute.js";
 import orderRouter from "./routes/orderroute.js";
 
 dotenv.config();
-dbconnect();
 
 const app = express();
 
@@ -40,8 +39,18 @@ app.use("/api/cart", cartroute);
 app.use("/api/order", orderRouter);
 
 /* ================= SERVER ================= */
-const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT}`);
-});
+const start = async () => {
+  try {
+    await dbconnect();
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`✅ Backend running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to start server:', err);
+    process.exit(1);
+  }
+};
+
+start();
