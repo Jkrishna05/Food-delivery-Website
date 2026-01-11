@@ -6,17 +6,22 @@ export const datacontext = createContext();
 
 const Storecontext = (props) => {
   let [cartItem, setCartItem] = useState({});
-  let url = 'http://localhost:3000';
+  let url = import.meta.env.VITE_BACKEND_URL;
+
   let [token, setToken] = useState('');
   let [food_list, setFood_list] = useState([]);
-
   let foodlist = async () => {
-    let res = await axios.get(`${url}/api/food/list`)
-    setFood_list(res.data.message)
-  }
+    try {
+      let res = await axios.get(`${url}/api/food/list`);
+      setFood_list(res.data.message);
+    } catch (error) {
+      console.error("Failed to load food list", error);
+    }
+  };
+
 
   let loadcartdata = async (token) => {
-    let res= await axios.post(`${url}/api/cart/get`, {}, { headers: { Authorization: `Bearer ${token}` } }) 
+    let res = await axios.post(`${url}/api/cart/get`, {}, { headers: { Authorization: `Bearer ${token}` } })
     // console.log(res.data.message);
     setCartItem(res.data.cartdata);
 

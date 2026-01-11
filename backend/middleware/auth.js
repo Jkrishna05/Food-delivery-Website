@@ -1,19 +1,25 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-let auth = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({ success: false, message: 'No token provided' });
-    }
-    let token = authHeader.split(' ')[1];
-    try {
-        let decode= jwt.verify(token, process.env.JWT_SECRET);
-        req.body.userId = decode.id;
-        next();
-        
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ success: false, message: 'Something went wrong' });
-    }
-}
+const auth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ success: false, message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Bearer <token>
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Invalid token format" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { id: decoded.id, isAdmin: decoded.isAdmin || false }; // attach to req.user
+    next();
+  } catch (error) {
+    console.error("JWT verification failed:", error.message);
+    return res.status(401).json({ success: false, message: "Invalid or expired token" });
+  }
+};
+
 export default auth;
