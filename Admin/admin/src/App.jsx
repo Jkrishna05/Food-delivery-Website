@@ -8,7 +8,8 @@ import Order from './pages/Order/Order'
 //  import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
-   let url='http://localhost:3000';
+  //  let url='http://localhost:3000';
+    let url=import.meta.env.VITE_BACKEND_URL;
   return (
     <div>
       {/* <ToastContainer /> */}

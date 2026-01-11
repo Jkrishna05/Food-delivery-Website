@@ -1,81 +1,58 @@
-import { log } from "console";
 import foodModel from "../models/foodmodel.js";
-import fs from 'fs/promises';
-import path from 'path';
+import cloudinary from "../config/cloudinary.js";
 
-let addfood=async(req,res)=>{
-    if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-    let img=`${req.file.filename}`
-    let food=new foodModel({
-        name:req.body.name,
-        description:req.body.description,
-        price:req.body.price,
-        category:req.body.category,
-        image:img
-    })
-    try {
-        await food.save();
-        res.json({success:true,message:'food added'})
-    } catch (error) {
-       console.log(error);
-         res.json({success:false,message:'error'})
-    }
-
-}
-let foodlist=async(req,res)=>{
-    try {
-         let  foods= await foodModel.find({});
-         res.json({success:true,message:foods})
-    } catch (error) {
-        res.jason({success:false,message:'error'})
-    }
-}
-
-// let removeItem=async(req,res)=>{
-//     try {
-//         let food= await foodModel.findById(req.body.id);
-//         fs.unlink(`uploads/${food.image}`)
-//         await foodModel.findByIdAndDelete(req.body.id);
-//         res.json({success:true,message:'food removed'})
-//     } catch (error) { 
-//         res.json({success:false,message:'error'})
-//     }
-// } 
-
-
-let removeItem = async (req, res) => {
+let addfood = async (req, res) => {
   try {
-    if (!req.body.id) {
-      return res.status(400).json({ success: false, message: 'ID is required' });
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image uploaded" });
     }
 
-    const food = await foodModel.findById(req.body.id);
-    if (!food) {
-      return res.status(404).json({ success: false, message: 'Food not found' });
-    }
+    const food = new foodModel({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      image: req.file.path,          // ✅ Cloudinary URL
+      imageId: req.file.filename     // ✅ Cloudinary public_id
+    });
 
-    console.log("food.image:", food.image);
-
-    const imagePath = path.join(process.cwd(), 'uploads', food.image);
-    console.log("Deleting:", imagePath);
-
-    try {
-      await fs.unlink(imagePath);
-      console.log("Image deleted successfully");
-    } catch (err) {
-      console.error("Could not delete file:", err.message);
-    }
-
-    await foodModel.findByIdAndDelete(req.body.id);
-    res.json({ success: true, message: 'Food removed' });
+    await food.save();
+    res.json({ success: true, message: "Food added" });
 
   } catch (error) {
-    console.error("Error removing food:", error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error adding food" });
   }
 };
 
+let foodlist = async (req, res) => {
+  try {
+    const foods = await foodModel.find({});
+    res.json({ success: true, message: foods });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error" });
+  }
+};
 
-export {addfood,foodlist,removeItem}
+let removeItem = async (req, res) => {
+  try {
+    const food = await foodModel.findById(req.body.id);
+    if (!food) {
+      return res.status(404).json({ success: false, message: "Food not found" });
+    }
+
+    // ✅ Delete image from Cloudinary
+    if (food.imageId) {
+      await cloudinary.uploader.destroy(food.imageId);
+    }
+
+    await foodModel.findByIdAndDelete(req.body.id);
+    res.json({ success: true, message: "Food removed" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error removing food" });
+  }
+};
+
+export { addfood, foodlist, removeItem };
