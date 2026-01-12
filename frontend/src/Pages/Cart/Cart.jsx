@@ -27,7 +27,7 @@ const Cart = () => {
             return (
               <div key={e._id} >
               <div key={e._id} className=' cart-item text-[10px] md:text-[20px] py-[20px] px-[10px] flex items-center' >
-                <img src={url+"/image/"+e.image} className='h-[30px] md:h-[80px]' alt="" />
+                <img src={ (e.image && e.image.startsWith('http')) ? e.image : (url + "/image/" + e.image) } className='h-[30px] md:h-[80px]' alt="" />
                 <p>{e.name}</p>
                 <p>${e.price}</p>
                 <p>{cartItem[e._id]}</p>
