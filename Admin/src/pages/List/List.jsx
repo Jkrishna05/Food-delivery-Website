@@ -50,7 +50,7 @@ const List = ({url}) => {
             {list.map((item, index) => {
               return (
                 <div className="food-item heading border-2 py-[10px] border-t-0 border-[#cacaca]" key={index}>
-                  <img className='w-[50px]' src={`${url}/image/${item.image}`} alt={item.name} />
+                  <img className='w-[50px]' src={(item.image && item.image.startsWith('http')) ? item.image : `${url}/image/${item.image}`} alt={item.name} />
                   <p>{item.name}</p>
                   <p>{item.category}</p>
                   <p>{item.price}</p>
