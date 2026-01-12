@@ -14,5 +14,4 @@ export const assets ={
     parcel_icon
 }
 
-// Use Vite environment variable for backend URL in production; fall back to localhost for dev
 export const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
