@@ -13,8 +13,8 @@ const Myorder = () => {
   let fetch = async () => {
     try {
       let res = await axios.post(`${url}/api/order/userorder`, {}, { headers: { Authorization: `Bearer ${token}` } });
-      setdata(res.data.order);
-      console.log(res.data.order);
+      setdata(res.data.orders);
+      console.log(res.data.orders);
     } catch (error) {
       console.error('Order fetch error:', error);
     }

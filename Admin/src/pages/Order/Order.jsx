@@ -3,41 +3,101 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import { assets } from '../../assets/admin_assets/assets'
-const Order = () => {
+const Order = ({ url }) => {
   let [orders,setorder]=useState([]);
-  let url = 'http://localhost:3000';
+  let [token, setToken] = useState('');
+  let [loading, setLoading] = useState(true);
+  let [error, setError] = useState('');
+
   let fetchOrder=async()=>{
     try {
-      let res=await axios.get(`${url}/api/order/allorders`);
+      setLoading(true);
+      setError('');
+      
+      if (!token) {
+        setError('No authorization token found. Please login first.');
+        setLoading(false);
+        return;
+      }
+      
+      let res=await axios.get(`${url}/api/order/allorders`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if(res.data.success){
-        setorder(res.data.order);
-        console.log(res.data.order);
+        setorder(res.data.orders);
+        console.log('Orders fetched successfully:', res.data.orders);
       }
       else{
-        alert("error in fetching order is")
+        setError("Error in fetching orders");
       }
     } catch (error) {
-      console.log(error)
-      alert("error in fetching order are")
+      console.error('Error fetching orders:', error);
+      if (error.response?.status === 401) {
+        setError('Unauthorized: Your token may have expired. Please login again.');
+      } else if (error.response?.status === 403) {
+        setError('Forbidden: You do not have admin privileges.');
+      } else {
+        setError(error.response?.data?.message || 'Error fetching orders');
+      }
+    } finally {
+      setLoading(false);
     }
   }
+  
   let updatestatus=async(event,orderId)=>{
     try {
-      let res=await axios.post(`${url}/api/order/status`,{orderId,status:event.target.value})
+      let res=await axios.post(`${url}/api/order/status`,{orderId,status:event.target.value}, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       if(res.data.success){
         console.log(res.data.message);  
         fetchOrder();
       }
     } catch (error) {
-      alert('not updated')
+      console.error('Error updating status:', error);
+      alert(error.response?.data?.message || 'Error updating order status');
     }
   }
+  
   useEffect(()=>{
-    fetchOrder()
-  },[])
+    const adminToken = localStorage.getItem('adminToken') || localStorage.getItem('token');
+    console.log('Token from localStorage:', adminToken ? 'Found' : 'Not found');
+    if (adminToken) {
+      setToken(adminToken);
+    } else {
+      setError('No token found. Please login first.');
+      setLoading(false);
+    }
+  }, [])
+
+  useEffect(()=>{
+    if(token) {
+      fetchOrder();
+    }
+  },[token])
   return (
     <div className='p-[20px]'>
          <h1 className='text-[25px] font-bold'>Orders page</h1>
+         
+         {error && (
+           <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
+             {error}
+           </div>
+         )}
+         
+         {loading && (
+           <div className='text-center py-8'>
+             <p>Loading orders...</p>
+           </div>
+         )}
+         
+         {!loading && orders.length === 0 && !error && (
+           <div className='text-center py-8'>
+             <p>No orders found</p>
+           </div>
+         )}
+         
+         {!loading && orders.length > 0 && (
             <div>
             {
               orders.map((order, i) => {
@@ -73,6 +133,7 @@ const Order = () => {
               })
             }
             </div>
+         )}
     </div>
   )
 }

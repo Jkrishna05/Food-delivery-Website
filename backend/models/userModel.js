@@ -13,6 +13,10 @@ let userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
     cartdata:{type:Object,default:{}}
   
 },{minimize:false})

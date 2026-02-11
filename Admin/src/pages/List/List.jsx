@@ -12,7 +12,7 @@ const List = ({url}) => {
       let res = await axios.get(`${url}/api/food/list`);
       console.log(res.data);
       toast.success('Data fetched successfully');
-      setlist(res.data.message);
+      setlist(res.data.foods);
     } catch (error) {
       toast.error('Error fetching data');
       console.error("Error fetching data:", error);
@@ -21,7 +21,10 @@ const List = ({url}) => {
   let remove=async(id)=>{
     // console.log(id);
     try {
-      let res=await axios.post(`${url}/api/food/remove`,{id});
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      let res=await axios.post(`${url}/api/food/remove`,{id}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       toast.success('food removed')
       await fetchData();
       console.log(res.data)

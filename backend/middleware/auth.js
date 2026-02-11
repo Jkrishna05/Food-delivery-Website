@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import userModel from "../models/userModel.js";
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -14,7 +15,16 @@ const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id, isAdmin: decoded.isAdmin || false }; // attach to req.user
+    const user = await userModel.findById(decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+    
+    req.user = { 
+      id: decoded.id, 
+      isAdmin: user.isAdmin || false 
+    };
     next();
   } catch (error) {
     console.error("JWT verification failed:", error.message);

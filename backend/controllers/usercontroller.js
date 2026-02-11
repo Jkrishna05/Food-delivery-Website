@@ -36,12 +36,15 @@ const signupUser = async (req, res) => {
       name,
       email,
       password: hashPassword,
+      isAdmin: false
     });
 
     return res.status(201).json({
       success: true,
       message: "User created successfully",
       token: token(newUser._id),
+      id: newUser._id,
+      isAdmin: newUser.isAdmin,
     });
 
   } catch (error) {
@@ -70,6 +73,8 @@ const loginUser = async (req, res) => {
     return res.status(200).json({
       success: true,
       token: token(user._id),
+      id: user._id,
+      isAdmin: user.isAdmin || false,
     });
 
   } catch (error) {

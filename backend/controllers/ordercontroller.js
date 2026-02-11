@@ -115,7 +115,7 @@ let user_order = async (req, res) => {
 // ================= GET ALL ORDERS (ADMIN) =================
 let listorder = async (req, res) => {
   try {
-    if (!req.user.isAdmin)
+    if (!req.user || !req.user.isAdmin)
       return res.status(403).json({ success: false, message: "Access denied" });
 
     const orders = await orderModel.find({});
@@ -126,10 +126,27 @@ let listorder = async (req, res) => {
   }
 };
 
+// ================= VERIFY ORDER PAYMENT =================
+let verifyOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const order = await orderModel.findById(orderId);
+    
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+    
+    res.json({ success: true, paid: order.payment });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ================= UPDATE ORDER STATUS (ADMIN) =================
 let updateStatus = async (req, res) => {
   try {
-    if (!req.user.isAdmin)
+    if (!req.user || !req.user.isAdmin)
       return res.status(403).json({ success: false, message: "Access denied" });
 
     const { orderId, status } = req.body;
@@ -141,4 +158,4 @@ let updateStatus = async (req, res) => {
   }
 };
 
-export { placeOrder, stripeWebhook, user_order, listorder, updateStatus };
+export { placeOrder, stripeWebhook, user_order, listorder, updateStatus, verifyOrder };

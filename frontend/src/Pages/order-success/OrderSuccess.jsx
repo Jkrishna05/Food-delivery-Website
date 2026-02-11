@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
+import { datacontext } from "../../Components/context/Storecontext";
 
 const OrderSuccess = () => {
+  const { contextValue } = useContext(datacontext);
+  const { url, token } = contextValue;
   const params = new URLSearchParams(useLocation().search);
   const orderId = params.get("orderId");
   const session_id = params.get("session_id");
@@ -10,8 +13,7 @@ const OrderSuccess = () => {
 
   useEffect(() => {
     const verify = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/order/verify", {
+      const res = await fetch(`${url}/api/order/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,8 +29,10 @@ const OrderSuccess = () => {
         setMessage("⏳ Payment pending...");
       }
     };
-    verify();
-  }, []);
+    if (token) {
+      verify();
+    }
+  }, [token]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-green-50">
