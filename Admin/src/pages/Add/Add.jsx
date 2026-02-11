@@ -49,7 +49,10 @@ const Add = ({ url }) => {
       formData.append("category", data.category);
 
       const res = await axios.post(`${url}/api/food/add`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('token')}`
+        },
       });
 
       toast.success("Item added successfully");

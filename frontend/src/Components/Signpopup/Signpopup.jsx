@@ -39,6 +39,7 @@ const Signpopup = ({ SetSignpopup }) => {
             console.log(res.data);
             setToken(res.data.token);
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('userId', res.data.userId || res.data.id);
             SetSignpopup(false);
             setData({
                 name:'',

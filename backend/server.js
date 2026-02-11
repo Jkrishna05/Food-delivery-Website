@@ -26,7 +26,9 @@ app.use(
       process.env.FRONTEND_URL,
       process.env.ADMIN_URL
     ],
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 

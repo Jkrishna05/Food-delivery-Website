@@ -13,7 +13,7 @@ const Storecontext = (props) => {
   let foodlist = async () => {
     try {
       let res = await axios.get(`${url}/api/food/list`);
-      setFood_list(res.data.message);
+      setFood_list(res.data.foods);
     } catch (error) {
       console.error("Failed to load food list", error);
     }
