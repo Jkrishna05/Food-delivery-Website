@@ -1,17 +1,11 @@
-import logo from './logo.png'
-import add_icon from './add_icon.png'
-import order_icon from './order_icon.png'
-import profile_image from './profile_image.png'
-import upload_area from './upload_area.png'
-import parcel_icon from './parcel_icon.png'
-
-export const assets ={
-    logo,
-    add_icon,
-    order_icon,
-    profile_image,
-    upload_area,
-    parcel_icon
+// Public folder assets - these will be served directly from /public/assets/
+export const assets = {
+    logo: '/assets/logo.png',
+    add_icon: '/assets/add_icon.png',
+    order_icon: '/assets/order_icon.png',
+    profile_image: '/assets/profile_image.png',
+    upload_area: '/assets/upload_area.png',
+    parcel_icon: '/assets/parcel_icon.png'
 }
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
+export const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
